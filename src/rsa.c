@@ -155,13 +155,49 @@ char *decodifica(int *mensagemCriptografada, long long chavePublica, long long n
     return mensagemDecriptografada;
 }
 
+int *encriptarMensagem(char mensagem[250], long long chavePrivada, long long n)
+{
+    int *mensagemEncrip, i;
+    mensagemEncrip = codifica(mensagem, chavePrivada, n);
+
+    printf("\nMensagem encriptada: ");
+
+    for (i = 0; i < strlen(mensagem); i++)
+    {
+        printf("%c", mensagemEncrip[i]);
+    }
+    printf("\n");
+    return mensagemEncrip;
+}
+
+void desencriptarMensagem(int *mensagemCriptografada, long long chavePublica, long long n)
+{
+    char *mensagemDescriptografada;
+    mensagemDescriptografada = decodifica(mensagemCriptografada, chavePublica, n);
+
+    printf("\nMensagem desencriptada: %s\n\n", mensagemDescriptografada);
+    free(mensagemDescriptografada);
+}
+
+void gerador(long long chavePrivada, long long chavePublica, long long n)
+{
+    int *mensagemCriptografada;
+    char mensagem[250];
+
+    printf("\nDigite uma mensagem:\n");
+    scanf("\n");
+    fgets(mensagem, 250, stdin);
+
+    mensagemCriptografada = encriptarMensagem(mensagem, chavePrivada, n);
+    desencriptarMensagem(mensagemCriptografada, chavePublica, n);
+
+    free(mensagemCriptografada);
+}
+
 void main(void)
 {
-    int i;
+    int i, opcao;
     long long primeiroPrimo, segundoPrimo, n, phi, chavePrivada, chavePublica;
-    char mensagem[250];
-    int *mensagemCriptografada;
-    char *mensagemDescriptografada;
     int ehPrimo;
 
     primeiroPrimo = obterNumeroPrimo(1);
@@ -184,26 +220,15 @@ void main(void)
 
     printf("\nChave publica: (%llu, %llu)\n", chavePublica, n);
 
-    printf("\nDigite uma mensagem:\n");
-
-    scanf("\n");
-    fgets(mensagem, 250, stdin);
-
-    mensagemCriptografada = codifica(mensagem, chavePrivada, n);
-
-    printf("\nMensagem encriptada: ");
-
-    for (i = 0; i < strlen(mensagem); i++)
+    do
     {
-        printf("%c", mensagemCriptografada[i]);
-    }
-    printf("\n");
+        printf("\nCriptografar nova mensagem? (1)Sim (2)Não\n");
+        scanf("%d", &opcao);
 
-    mensagemDescriptografada = decodifica(mensagemCriptografada, chavePublica, n);
+        if (opcao == 1)
+            gerador(chavePrivada, chavePublica, n);
 
-    printf("\nMensagem desencriptada: %s\n\n", mensagemDescriptografada);
+    } while (opcao != 2);
 
-    free(mensagemCriptografada);
-    free(mensagemDescriptografada);
     return;
 }
